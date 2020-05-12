@@ -1,0 +1,165 @@
+@import url("https://fonts.googleapis.com/css2?family=Kalam:wght@700&display=swap");
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+:root {
+  --cell-size: 100px;
+  --mark-size: calc(var(--cell-size) * 0.9);
+  --background: #40403b;
+  --xColor: #8c8c81;
+  --xWinColor: #d9d9c7;
+  --oColor: #faa998;
+  --oWinColor: #ad756a;
+  --tie: #365a61;
+}
+
+html,
+body {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background);
+  transition: background-color 1s ease-in-out;
+  font-family: "Kalam", cursive;
+}
+
+button {
+  height: 6rem;
+  width: 18rem;
+  position: fixed;
+  top: 15px;
+  text-transform: uppercase;
+  font-size: 3rem;
+  color: white;
+  border-radius: 50px;
+  border-style: none;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+  background-color: #3d3b40;
+  cursor: pointer;
+  transition: background-color 1s ease-in-out;
+  font-family: "Kalam", cursive;
+}
+
+button:focus {
+  outline: 0;
+}
+
+button:active {
+  box-shadow: none;
+}
+
+#start {
+  visibility: hidden;
+}
+.board {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-items: center;
+  align-items: center; */
+}
+.board .cell:not(.x):not(.o):hover::before,
+.board .cell:not(.x):not(.o):hover::after {
+  opacity: 0.2;
+}
+
+.cell {
+  height: var(--cell-size);
+  width: var(--cell-size);
+  border: 2px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+.cell.everythingSet {
+  cursor: not-allowed;
+}
+
+.cell:first-child,
+.cell:nth-child(2),
+.cell:nth-child(3) {
+  border-top: none;
+}
+.cell:last-child,
+.cell:nth-child(7),
+.cell:nth-child(8) {
+  border-bottom: none;
+}
+
+.cell:nth-child(3n + 1) {
+  border-left: none;
+}
+.cell:nth-child(3n + 3) {
+  border-right: none;
+}
+
+.cell.x,
+.cell.o {
+  cursor: not-allowed;
+}
+
+.cell::before,
+.cell::after {
+  position: absolute;
+  content: "";
+}
+
+.cell.x::before,
+.cell.x::after,
+.board.x .cell:not(.x):not(.o):hover::after,
+.board.x .cell:not(.x):not(.o):hover::before {
+  width: calc(var(--mark-size) * 0.15);
+  height: var(--mark-size);
+  background-color: var(--xColor);
+}
+
+.cell.x::before,
+.board.x .cell:not(.x):not(.o):hover::before {
+  transform: rotate(45deg);
+}
+.cell.x::after,
+.board.x .cell:not(.x):not(.o):hover::after {
+  transform: rotate(-45deg);
+}
+
+.cell.o::before,
+.board.o .cell:not(.x):not(.o):hover::before {
+  border-radius: 50%;
+
+  width: var(--mark-size);
+  height: var(--mark-size);
+  border: calc(var(--mark-size) * 0.15) solid var(--oColor);
+}
+
+.scores {
+  position: fixed;
+  height: 100vh;
+  font-size: 35rem;
+  display: flex;
+  align-items: center;
+  opacity: 0.4;
+}
+
+.algo {
+  left: 0;
+}
+
+.player {
+  right: 20px;
+}
+
+.draw {
+  position: fixed;
+  bottom: 0;
+  opacity: 0.4;
+  font-size: 5rem;
+}

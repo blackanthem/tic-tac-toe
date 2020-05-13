@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Kalam:wght@700&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Kalam:wght@700&display=swap"); */
 
 *,
 *::after,
@@ -7,7 +7,8 @@
 }
 
 :root {
-  --cell-size: 100px;
+  --cell-size: 150px;
+  --board-size: 450px;
   --mark-size: calc(var(--cell-size) * 0.9);
   --background: #40403b;
   --xColor: #8c8c81;
@@ -55,15 +56,14 @@ button:active {
 }
 
 #start {
-  visibility: hidden;
+  visibility: visible;
 }
 .board {
-  width: 300px;
-  height: 300px;
+  width: var(--board-size);
+  height: var(--board-size);
   display: flex;
   flex-wrap: wrap;
-  /* justify-items: center;
-  align-items: center; */
+  margin-top: 100px;
 }
 .board .cell:not(.x):not(.o):hover::before,
 .board .cell:not(.x):not(.o):hover::after {
@@ -79,9 +79,6 @@ button:active {
   align-items: center;
   position: relative;
   cursor: pointer;
-}
-.cell.everythingSet {
-  cursor: not-allowed;
 }
 
 .cell:first-child,

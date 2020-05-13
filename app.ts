@@ -9,6 +9,7 @@ const winningCombos = [
   [0, 4, 8],
 ];
 
+//TODO: think of a better variable name
 const adjacentCells = [
   [
     [1, 2],
@@ -41,7 +42,7 @@ const adjacentCells = [
   [
     [0, 3],
     [7, 8],
-    [4, 5],
+    [4, 2],
   ],
   [
     [1, 4],
@@ -57,6 +58,7 @@ const adjacentCells = [
 const forkIndexes = adjacentCells.map((index) => {
   return index.reduce((acc, curr) => acc.concat(curr), [] as number[]);
 });
+
 const corners = [0, 2, 6, 8];
 
 let board: boolean[] = [],
@@ -100,9 +102,9 @@ function start() {
   });
 
   if (!player) {
-    let shuffled = shuffle(corners)[2];
-    console.log("Move to " + shuffled);
-    return codesTurn(shuffled);
+    const moveTo = shuffle(corners)[2];
+    console.log("Move to " + moveTo);
+    return codesTurn(moveTo);
   }
   return;
 }
@@ -129,7 +131,7 @@ function play(id: number) {
   if (checkTie()) return declareTie();
   player = !player;
 
-  if (player == false) {
+  if (player === false) {
     algorithmPlays = board.reduce(
       (acc, value, currIndex) =>
         value === player ? acc.concat(currIndex) : acc,
@@ -146,7 +148,7 @@ function play(id: number) {
         (playerPlays.includes(2) && playerPlays.includes(6)) ||
         (playerPlays.includes(0) && playerPlays.includes(8))
       ) {
-        let side = emptySide();
+        const side = emptySide();
         console.log("Move to empty side " + side);
         return codesTurn(side as number);
       }
@@ -157,7 +159,7 @@ function play(id: number) {
         playerPlays.includes(4) &&
         Math.random() > 0.85
       ) {
-        let corner = oppositeCorner();
+        const corner = oppositeCorner();
         console.log("Move to opposite corner " + corner);
         return codesTurn(corner as number);
       }
@@ -214,8 +216,8 @@ function play(id: number) {
 }
 
 function canWin(plays: number[]): number | boolean {
-  let iterator = winningCombos.entries();
-  for (let [index, combo] of iterator) {
+  let iterator = winningCombos.values();
+  for (const combo of iterator) {
     let count = 0;
     combo.forEach((x) => {
       if (plays.indexOf(x) > -1) {
@@ -246,17 +248,19 @@ function canBlockFork() {
   if (Array.isArray(blockForkOn)) {
     if (blockForkOn.length === 1) return blockForkOn[0];
 
-    for (let i = 0; i < blockForkOn.length; i++) {
-      const forkIndex = blockForkOn[i];
-      const cells = adjacentCells[forkIndex];
+    const iterator = blockForkOn.values();
 
-      for (let j = 0; j < cells.length; j++) {
-        const cell = cells[j];
+    for (const forkIndex of iterator) {
+      const cells = adjacentCells[forkIndex].values();
+
+      for (const cell of cells) {
         const [first, second] = cell;
 
-        if (playerPlays.every((x) => !cell.includes(x)))
-          if (algorithmPlays.includes(first) || algorithmPlays.includes(second))
-            return forkIndex;
+        if (
+          playerPlays.every((x) => !cell.includes(x)) &&
+          (algorithmPlays.includes(first) || algorithmPlays.includes(second))
+        )
+          return forkIndex;
       }
     }
   }
@@ -279,20 +283,20 @@ function oppositeCorner() {
 }
 
 function emptyCorner() {
-  const shuffledArray = shuffle(corners);
-  for (let i = 0; i < 4; i++) {
-    if (!indexesPlayed.includes(shuffledArray[i])) return shuffledArray[i];
-  }
+  const shuffledArray = shuffle(corners).values();
+  for (const moveTo of shuffledArray)
+    if (!indexesPlayed.includes(moveTo)) return moveTo;
+
   return false;
 }
 
 function emptySide() {
   const sides = [1, 3, 5, 7];
-  const shuffledArray = shuffle(sides);
+  const shuffledArray = shuffle(sides).values();
 
-  for (let i = 0; i < 4; i++) {
-    if (!indexesPlayed.includes(shuffledArray[i])) return shuffledArray[i];
-  }
+  for (const moveTo of shuffledArray)
+    if (!indexesPlayed.includes(moveTo)) return moveTo;
+
   return false;
 }
 
@@ -313,18 +317,15 @@ function findForks(findFor: number[], against: number[]): number[] | boolean {
 
     possibleForks.forEach((forkIndex) => {
       winningCombos.forEach((winCombo, index) => {
-        if (winCombo.includes(forkIndex)) {
-          //make into one line
-          if (!duplicate.includes(index)) {
-            possibleWins.push(winCombo);
-            duplicate.push(index);
-          }
+        if (winCombo.includes(forkIndex) && !duplicate.includes(index)) {
+          possibleWins.push(winCombo);
+          duplicate.push(index);
         }
       });
     });
 
     against.forEach((play) => {
-      let forkIndex = possibleForks.indexOf(play);
+      const forkIndex = possibleForks.indexOf(play);
       if (forkIndex > 0) possibleForks.splice(forkIndex, 1);
 
       for (let i = possibleWins.length - 1; i >= 0; i--) {
@@ -355,20 +356,16 @@ function findForks(findFor: number[], against: number[]): number[] | boolean {
 }
 
 function hasWon(plays: number[]): boolean {
-  let iterator = winningCombos.entries();
+  const iterator = winningCombos.values();
 
-  for (let [index, combo] of iterator) {
-    if (combo.every((x) => plays.indexOf(x) > -1)) {
-      return true;
-    }
-  }
+  for (const combo of iterator)
+    if (combo.every((x) => plays.indexOf(x) > -1)) return true;
+
   return false;
 }
 
 function checkTie() {
-  if (indexesPlayed.length === 9) {
-    return true;
-  }
+  if (indexesPlayed.length === 9) return true;
 }
 
 function declareWinner() {
@@ -405,8 +402,7 @@ function declareTie() {
 }
 
 function codesTurn(id: number): any {
-  const cell = document.getElementById(`${id}`)!;
-  cell.removeEventListener("click", clicked);
+  document.getElementById(`${id}`)!.removeEventListener("click", clicked);
   return play(id);
 }
 
@@ -427,9 +423,8 @@ function findDuplicates(array: number[]) {
     if (
       sortedArray[i + 1] === sortedArray[i] &&
       !duplicates.includes(sortedArray[i])
-    ) {
+    )
       duplicates.push(sortedArray[i]);
-    }
   }
   return duplicates;
 }

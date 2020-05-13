@@ -41,7 +41,7 @@ const adjacentCells = [
     [
         [0, 3],
         [7, 8],
-        [4, 5],
+        [4, 2],
     ],
     [
         [1, 4],
@@ -83,9 +83,9 @@ function start() {
         div.style.cursor = "pointer";
     });
     if (!player) {
-        let shuffled = shuffle(corners)[2];
-        console.log("Move to " + shuffled);
-        return codesTurn(shuffled);
+        const moveTo = shuffle(corners)[2];
+        console.log("Move to " + moveTo);
+        return codesTurn(moveTo);
     }
     return;
 }
@@ -105,13 +105,13 @@ function play(id) {
     if (checkTie())
         return declareTie();
     player = !player;
-    if (player == false) {
+    if (player === false) {
         algorithmPlays = board.reduce((acc, value, currIndex) => value === player ? acc.concat(currIndex) : acc, []);
         playerPlays = board.reduce((acc, value, currIndex) => value === !player ? acc.concat(currIndex) : acc, []);
         if (numberOfPlays === 3) {
             if ((playerPlays.includes(2) && playerPlays.includes(6)) ||
                 (playerPlays.includes(0) && playerPlays.includes(8))) {
-                let side = emptySide();
+                const side = emptySide();
                 console.log("Move to empty side " + side);
                 return codesTurn(side);
             }
@@ -120,7 +120,7 @@ function play(id) {
             if (algorithmPlays.every((x) => x % 2 === 0) &&
                 playerPlays.includes(4) &&
                 Math.random() > 0.85) {
-                let corner = oppositeCorner();
+                const corner = oppositeCorner();
                 console.log("Move to opposite corner " + corner);
                 return codesTurn(corner);
             }
@@ -168,8 +168,8 @@ function play(id) {
     }
 }
 function canWin(plays) {
-    let iterator = winningCombos.entries();
-    for (let [index, combo] of iterator) {
+    let iterator = winningCombos.values();
+    for (const combo of iterator) {
         let count = 0;
         combo.forEach((x) => {
             if (plays.indexOf(x) > -1) {
@@ -196,15 +196,14 @@ function canBlockFork() {
     if (Array.isArray(blockForkOn)) {
         if (blockForkOn.length === 1)
             return blockForkOn[0];
-        for (let i = 0; i < blockForkOn.length; i++) {
-            const forkIndex = blockForkOn[i];
-            const cells = adjacentCells[forkIndex];
-            for (let j = 0; j < cells.length; j++) {
-                const cell = cells[j];
+        const iterator = blockForkOn.values();
+        for (const forkIndex of iterator) {
+            const cells = adjacentCells[forkIndex].values();
+            for (const cell of cells) {
                 const [first, second] = cell;
-                if (playerPlays.every((x) => !cell.includes(x)))
-                    if (algorithmPlays.includes(first) || algorithmPlays.includes(second))
-                        return forkIndex;
+                if (playerPlays.every((x) => !cell.includes(x)) &&
+                    (algorithmPlays.includes(first) || algorithmPlays.includes(second)))
+                    return forkIndex;
             }
         }
     }
@@ -229,20 +228,18 @@ function oppositeCorner() {
         return false;
 }
 function emptyCorner() {
-    const shuffledArray = shuffle(corners);
-    for (let i = 0; i < 4; i++) {
-        if (!indexesPlayed.includes(shuffledArray[i]))
-            return shuffledArray[i];
-    }
+    const shuffledArray = shuffle(corners).values();
+    for (const moveTo of shuffledArray)
+        if (!indexesPlayed.includes(moveTo))
+            return moveTo;
     return false;
 }
 function emptySide() {
     const sides = [1, 3, 5, 7];
-    const shuffledArray = shuffle(sides);
-    for (let i = 0; i < 4; i++) {
-        if (!indexesPlayed.includes(shuffledArray[i]))
-            return shuffledArray[i];
-    }
+    const shuffledArray = shuffle(sides).values();
+    for (const moveTo of shuffledArray)
+        if (!indexesPlayed.includes(moveTo))
+            return moveTo;
     return false;
 }
 function findForks(findFor, against) {
@@ -259,16 +256,14 @@ function findForks(findFor, against) {
         let duplicate = [];
         possibleForks.forEach((forkIndex) => {
             winningCombos.forEach((winCombo, index) => {
-                if (winCombo.includes(forkIndex)) {
-                    if (!duplicate.includes(index)) {
-                        possibleWins.push(winCombo);
-                        duplicate.push(index);
-                    }
+                if (winCombo.includes(forkIndex) && !duplicate.includes(index)) {
+                    possibleWins.push(winCombo);
+                    duplicate.push(index);
                 }
             });
         });
         against.forEach((play) => {
-            let forkIndex = possibleForks.indexOf(play);
+            const forkIndex = possibleForks.indexOf(play);
             if (forkIndex > 0)
                 possibleForks.splice(forkIndex, 1);
             for (let i = possibleWins.length - 1; i >= 0; i--) {
@@ -292,18 +287,15 @@ function findForks(findFor, against) {
     return false;
 }
 function hasWon(plays) {
-    let iterator = winningCombos.entries();
-    for (let [index, combo] of iterator) {
-        if (combo.every((x) => plays.indexOf(x) > -1)) {
+    const iterator = winningCombos.values();
+    for (const combo of iterator)
+        if (combo.every((x) => plays.indexOf(x) > -1))
             return true;
-        }
-    }
     return false;
 }
 function checkTie() {
-    if (indexesPlayed.length === 9) {
+    if (indexesPlayed.length === 9)
         return true;
-    }
 }
 function declareWinner() {
     boardDiv.classList.remove("x", "o");
@@ -337,8 +329,7 @@ function declareTie() {
     }, 1000);
 }
 function codesTurn(id) {
-    const cell = document.getElementById(`${id}`);
-    cell.removeEventListener("click", clicked);
+    document.getElementById(`${id}`).removeEventListener("click", clicked);
     return play(id);
 }
 function shuffle(array) {
@@ -354,9 +345,8 @@ function findDuplicates(array) {
     let duplicates = [];
     for (let i = 0; i < length; i++) {
         if (sortedArray[i + 1] === sortedArray[i] &&
-            !duplicates.includes(sortedArray[i])) {
+            !duplicates.includes(sortedArray[i]))
             duplicates.push(sortedArray[i]);
-        }
     }
     return duplicates;
 }

@@ -64,6 +64,7 @@ button:active {
   display: flex;
   flex-wrap: wrap;
   margin-top: 100px;
+  min-width: calc(var(--cell-size) * 3);
 }
 .board .cell:not(.x):not(.o):hover::before,
 .board .cell:not(.x):not(.o):hover::after {

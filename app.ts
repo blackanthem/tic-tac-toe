@@ -89,6 +89,7 @@ window.onload = () => {
 };
 
 function start() {
+    console.log('START')
   board = [];
   indexesPlayed = [];
   player = Math.random() > 0.5;
@@ -131,7 +132,7 @@ function play(id: number) {
   if (checkTie()) return declareTie();
   player = !player;
 
-  if (player === false) {
+  if (!player) {
     algorithmPlays = board.reduce(
       (acc, value, currIndex) =>
         value === player ? acc.concat(currIndex) : acc,
@@ -226,7 +227,7 @@ function canWin(plays: number[]): number | boolean {
     });
 
     if (count == 2) {
-      let moveTo = combo.filter((x) => plays.indexOf(x) < 0)[0];
+      const moveTo = combo.filter((x) => plays.indexOf(x) < 0)[0];
       if (!indexesPlayed.includes(moveTo)) return moveTo;
     }
   }
@@ -300,7 +301,7 @@ function emptySide() {
   return false;
 }
 
-function findForks(findFor: number[], against: number[]): number[] | boolean {
+function findForks(findFor: number[], against: number[]) {
   const iterator = forkIndexes.entries();
   const combined: number[] = [];
   for (let [index, indexes] of iterator) {

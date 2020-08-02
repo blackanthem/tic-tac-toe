@@ -73,6 +73,7 @@ window.onload = () => {
     start();
 };
 function start() {
+    console.log('START');
     board = [];
     indexesPlayed = [];
     player = Math.random() > 0.5;
@@ -105,7 +106,7 @@ function play(id) {
     if (checkTie())
         return declareTie();
     player = !player;
-    if (player === false) {
+    if (!player) {
         algorithmPlays = board.reduce((acc, value, currIndex) => value === player ? acc.concat(currIndex) : acc, []);
         playerPlays = board.reduce((acc, value, currIndex) => value === !player ? acc.concat(currIndex) : acc, []);
         if (numberOfPlays === 3) {
@@ -177,7 +178,7 @@ function canWin(plays) {
             }
         });
         if (count == 2) {
-            let moveTo = combo.filter((x) => plays.indexOf(x) < 0)[0];
+            const moveTo = combo.filter((x) => plays.indexOf(x) < 0)[0];
             if (!indexesPlayed.includes(moveTo))
                 return moveTo;
         }

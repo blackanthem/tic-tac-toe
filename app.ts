@@ -88,8 +88,12 @@ window.onload = () => {
   start();
 };
 
+document.onkeypress = (e) => {
+  if (e.code === "Space") start();
+};
+
 function start() {
-    console.log('START')
+  console.log("START");
   board = [];
   indexesPlayed = [];
   player = Math.random() > 0.5;
